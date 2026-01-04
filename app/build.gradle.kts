@@ -46,4 +46,5 @@ dependencies {
     implementation("com.android.volley:volley:1.2.1")
     implementation("com.google.code.gson:gson:2.9.1")
     implementation ("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 }

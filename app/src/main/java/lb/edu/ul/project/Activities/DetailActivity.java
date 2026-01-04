@@ -1,6 +1,7 @@
 package lb.edu.ul.project.Activities;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -53,7 +54,7 @@ public class DetailActivity extends AppCompatActivity {
     private NestedScrollView scrollView;
     private FavoritesDatabaseHelper dbHelper;
     private FilmItem currentFilm;
-    private Button writeReviewButton;
+    private Button writeReviewButton, findTheaterButton;
     private List<Review> movieReviews;
     private SharedPreferences prefs;
 
@@ -74,6 +75,7 @@ public class DetailActivity extends AppCompatActivity {
 
         favImg.setOnClickListener(v -> toggleFavorite());
         writeReviewButton.setOnClickListener(v -> showWriteReviewDialog());
+        findTheaterButton.setOnClickListener(v -> openTheaterActivity());
     }
 
     private void sendRequest() {
@@ -268,11 +270,23 @@ public class DetailActivity extends AppCompatActivity {
         reviewsCountText = findViewById(R.id.reviewsCountText);
         noReviewsText = findViewById(R.id.noReviewsText);
         writeReviewButton = findViewById(R.id.writeReviewButton);
+        findTheaterButton = findViewById(R.id.findTheaterButton);
 
         recyclerViewActors.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerViewCategory.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerViewReviews.setLayoutManager(new LinearLayoutManager(this));
 
         backImg.setOnClickListener(v -> finish());
+    }
+
+    private void openTheaterActivity() {
+        if (currentFilm == null) {
+            Toast.makeText(this, "Movie details not loaded yet!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent intent = new Intent(this, TheaterActivity.class);
+        intent.putExtra("movieTitle", currentFilm.getTitle());
+        startActivity(intent);
     }
 }

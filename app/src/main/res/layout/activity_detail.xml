@@ -201,6 +201,20 @@
                 app:layout_constraintTop_toBottomOf="@id/imagesRecycler" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/findTheaterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="#1A1A1A"
+                android:text="Find Theaters"
+                android:textColor="@color/yellow"
+                app:layout_constraintBottom_toBottomOf="@id/reviewsCountText"
+                app:layout_constraintEnd_toStartOf="@id/writeReviewButton"
+                app:layout_constraintTop_toTopOf="@id/reviewsCountText"
+                app:strokeColor="@color/yellow"
+                app:strokeWidth="1dp" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/writeReviewButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

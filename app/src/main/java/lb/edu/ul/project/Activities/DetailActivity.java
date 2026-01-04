@@ -50,7 +50,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView titleTxt, movieRateTxt, movieTimeTxt, movieSummaryInfo, movieActorsInfo;
     private TextView reviewsCountText, noReviewsText;
     private int idFilm;
-    private ImageView pic2, backImg, favImg;
+    private ImageView pic2, backImg, favImg, shareImg;
     private RecyclerView.Adapter adapterActorList, adapterCategory, reviewAdapter;
     private RecyclerView recyclerViewActors, recyclerViewCategory, recyclerViewReviews;
     private NestedScrollView scrollView;
@@ -76,6 +76,7 @@ public class DetailActivity extends AppCompatActivity {
         updateFavoriteIcon(dbHelper.isFavorite(idFilm));
 
         favImg.setOnClickListener(v -> toggleFavorite());
+        shareImg.setOnClickListener(v -> shareMovie());
         writeReviewButton.setOnClickListener(v -> showWriteReviewDialog());
         findTheaterButton.setOnClickListener(v -> openTheaterActivity());
         setReminderButton.setOnClickListener(v -> showSetReminderDialog());
@@ -267,6 +268,7 @@ public class DetailActivity extends AppCompatActivity {
         movieActorsInfo = findViewById(R.id.movieActorInfo);
         backImg = findViewById(R.id.backImg);
         favImg = findViewById(R.id.imageView8);
+        shareImg = findViewById(R.id.shareImg);
         recyclerViewCategory = findViewById(R.id.genreView);
         recyclerViewActors = findViewById(R.id.imagesRecycler);
         recyclerViewReviews = findViewById(R.id.reviewsRecyclerView);
@@ -410,5 +412,53 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = new Intent(this, PersonProfileActivity.class);
         intent.putExtra("person", person);
         startActivity(intent);
+    }
+
+    private void shareMovie() {
+        if (currentFilm == null) {
+            Toast.makeText(this, "Movie details not loaded yet!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Create share text with movie details
+        StringBuilder shareText = new StringBuilder();
+        shareText.append("🎬 Check out this movie!\n\n");
+        shareText.append("📽️ ").append(currentFilm.getTitle());
+        
+        if (currentFilm.getYear() != null && !currentFilm.getYear().isEmpty()) {
+            shareText.append(" (").append(currentFilm.getYear()).append(")");
+        }
+        shareText.append("\n\n");
+        
+        if (currentFilm.getImdbRating() != null && !currentFilm.getImdbRating().isEmpty()) {
+            shareText.append("⭐ IMDb Rating: ").append(currentFilm.getImdbRating()).append("\n");
+        }
+        
+        if (currentFilm.getDirector() != null && !currentFilm.getDirector().isEmpty()) {
+            shareText.append("🎥 Director: ").append(currentFilm.getDirector()).append("\n");
+        }
+        
+        if (currentFilm.getActors() != null && !currentFilm.getActors().isEmpty()) {
+            shareText.append("🎭 Starring: ").append(currentFilm.getActors()).append("\n");
+        }
+        
+        if (currentFilm.getPlot() != null && !currentFilm.getPlot().isEmpty()) {
+            shareText.append("\n📖 ").append(currentFilm.getPlot());
+        }
+
+        // Create share intent
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, currentFilm.getTitle());
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText.toString());
+
+        // Show app chooser
+        Intent chooser = Intent.createChooser(shareIntent, "Share " + currentFilm.getTitle() + " via");
+        
+        if (shareIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(chooser);
+        } else {
+            Toast.makeText(this, "No apps available to share", Toast.LENGTH_SHORT).show();
+        }
     }
 }

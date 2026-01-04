@@ -196,7 +196,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.25"
+            android:layout_weight="0.2"
             android:orientation="vertical">
 
             <ImageView
@@ -214,13 +214,14 @@
                 android:layout_height="wrap_content"
                 android:text="Explorer"
                 android:textAlignment="center"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.25"
+            android:layout_weight="0.2"
             android:orientation="vertical">
 
             <ImageView
@@ -238,13 +239,14 @@
                 android:layout_height="wrap_content"
                 android:text="Favorite"
                 android:textAlignment="center"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.25"
+            android:layout_weight="0.2"
             android:orientation="vertical">
 
             <ImageView
@@ -262,13 +264,39 @@
                 android:layout_height="wrap_content"
                 android:text="Watchlist"
                 android:textAlignment="center"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.25"
+            android:layout_weight="0.2"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:src="@drawable/quiz"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/textView17"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Quiz"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2"
             android:orientation="vertical">
 
             <ImageView
@@ -286,7 +314,8 @@
                 android:layout_height="wrap_content"
                 android:text="Profile"
                 android:textAlignment="center"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="11sp" />
         </LinearLayout>
     </LinearLayout>
     </FrameLayout>

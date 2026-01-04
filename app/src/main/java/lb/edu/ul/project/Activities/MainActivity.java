@@ -209,6 +209,9 @@ public class MainActivity extends AppCompatActivity {
         ImageView watchlistBtn = findViewById(R.id.imageView5);
         watchlistBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, WatchlistActivity.class)));
 
+        ImageView quizBtn = findViewById(R.id.imageView7);
+        quizBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, QuizActivity.class)));
+
         ImageView profileBtn = findViewById(R.id.imageView6);
         profileBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, ProfileActivity.class)));
 

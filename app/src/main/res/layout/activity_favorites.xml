@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/black"
+    android:padding="16dp">
+
+    <!-- Back Button -->
+    <ImageView
+        android:id="@+id/backImg"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/back"
+        app:tint="@color/white"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="Back" />
+
+    <!-- No Favorites Message -->
+    <TextView
+        android:id="@+id/noFavoritesMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No favorite movies yet!"
+
+        android:textSize="18sp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:paddingTop="50dp"
+        android:fontFamily="sans-serif-medium" />
+
+    <!-- Favorites RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewFavorites"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:paddingBottom="20dp"
+        android:clipToPadding="false" />
+
+</LinearLayout>
+

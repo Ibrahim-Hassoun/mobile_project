@@ -65,12 +65,6 @@ public class MainActivity extends AppCompatActivity {
         sendRequestBestMovies();
         sendRequestUpComing();
         sendRequestCategory();
-
-        ImageView favBtn = findViewById(R.id.imageView4);
-        favBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
-            startActivity(intent);
-        });
     }
 
     private void sendRequestBestMovies() {
@@ -214,6 +208,9 @@ public class MainActivity extends AppCompatActivity {
 
         ImageView watchlistBtn = findViewById(R.id.imageView5);
         watchlistBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, WatchlistActivity.class)));
+
+        ImageView profileBtn = findViewById(R.id.imageView6);
+        profileBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, ProfileActivity.class)));
 
     }
 }

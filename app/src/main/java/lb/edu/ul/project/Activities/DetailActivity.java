@@ -3,6 +3,7 @@ package lb.edu.ul.project.Activities;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.provider.CalendarContract;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ import lb.edu.ul.project.Adapters.CategoryEachFilmListAdapter;
 import lb.edu.ul.project.Adapters.ReviewAdapter;
 import lb.edu.ul.project.Database.FavoritesDatabaseHelper;
 import lb.edu.ul.project.Domain.FilmItem;
+import lb.edu.ul.project.Domain.Person;
 import lb.edu.ul.project.Domain.Review;
 import lb.edu.ul.project.R;
 
@@ -54,7 +56,7 @@ public class DetailActivity extends AppCompatActivity {
     private NestedScrollView scrollView;
     private FavoritesDatabaseHelper dbHelper;
     private FilmItem currentFilm;
-    private Button writeReviewButton, findTheaterButton;
+    private Button writeReviewButton, findTheaterButton, setReminderButton;
     private List<Review> movieReviews;
     private SharedPreferences prefs;
 
@@ -76,6 +78,7 @@ public class DetailActivity extends AppCompatActivity {
         favImg.setOnClickListener(v -> toggleFavorite());
         writeReviewButton.setOnClickListener(v -> showWriteReviewDialog());
         findTheaterButton.setOnClickListener(v -> openTheaterActivity());
+        setReminderButton.setOnClickListener(v -> showSetReminderDialog());
     }
 
     private void sendRequest() {
@@ -271,12 +274,19 @@ public class DetailActivity extends AppCompatActivity {
         noReviewsText = findViewById(R.id.noReviewsText);
         writeReviewButton = findViewById(R.id.writeReviewButton);
         findTheaterButton = findViewById(R.id.findTheaterButton);
+        setReminderButton = findViewById(R.id.setReminderButton);
 
         recyclerViewActors.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerViewCategory.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerViewReviews.setLayoutManager(new LinearLayoutManager(this));
 
         backImg.setOnClickListener(v -> finish());
+        
+        movieActorsInfo.setOnClickListener(v -> {
+            if (currentFilm != null && currentFilm.getActors() != null) {
+                openPersonProfile(currentFilm.getActors(), "Actor");
+            }
+        });
     }
 
     private void openTheaterActivity() {
@@ -287,6 +297,118 @@ public class DetailActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, TheaterActivity.class);
         intent.putExtra("movieTitle", currentFilm.getTitle());
+        startActivity(intent);
+    }
+
+    private void showSetReminderDialog() {
+        if (currentFilm == null) {
+            Toast.makeText(this, "Movie details not loaded yet!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+            .setTitle("Set Release Reminder")
+            .setMessage("Would you like to add \"" + currentFilm.getTitle() + "\" to your calendar?\n\nRelease Date: " + currentFilm.getReleased())
+            .setPositiveButton("Add to Calendar", (dialog, which) -> setCalendarReminder())
+            .setNegativeButton("Cancel", null)
+            .setIcon(android.R.drawable.ic_menu_my_calendar)
+            .show();
+    }
+
+    private void setCalendarReminder() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_INSERT);
+            intent.setData(CalendarContract.Events.CONTENT_URI);
+            
+            intent.putExtra(CalendarContract.Events.TITLE, currentFilm.getTitle() + " - Movie Release");
+            intent.putExtra(CalendarContract.Events.DESCRIPTION, 
+                "Don't miss the release of " + currentFilm.getTitle() + "!\n\n" +
+                "IMDb Rating: " + currentFilm.getImdbRating() + "\n" +
+                "Director: " + currentFilm.getDirector());
+            intent.putExtra(CalendarContract.Events.EVENT_LOCATION, "Theaters");
+            intent.putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_FREE);
+            
+            // Parse release date if possible, otherwise use a default time
+            String releaseDate = currentFilm.getReleased();
+            if (releaseDate != null && !releaseDate.isEmpty()) {
+                try {
+                    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.ENGLISH);
+                    java.util.Date date = sdf.parse(releaseDate);
+                    if (date != null) {
+                        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, date.getTime());
+                        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, date.getTime() + 3600000); // +1 hour
+                        intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
+                    }
+                } catch (Exception e) {
+                    // If parsing fails, let user set date manually
+                }
+            }
+            
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+                Toast.makeText(this, "Opening calendar...", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "No calendar app found", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Error opening calendar: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void openPersonProfile(String actorsString, String role) {
+        if (actorsString == null || actorsString.isEmpty()) {
+            Toast.makeText(this, "No " + role.toLowerCase() + " information available", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Split actors by comma and show dialog to select one
+        String[] actors = actorsString.split(",");
+        
+        if (actors.length == 1) {
+            // If only one actor, open directly
+            openPersonProfileActivity(actors[0].trim(), role);
+        } else {
+            // Show dialog to select actor
+            new AlertDialog.Builder(this)
+                .setTitle("Select " + role)
+                .setItems(actors, (dialog, which) -> {
+                    openPersonProfileActivity(actors[which].trim(), role);
+                })
+                .show();
+        }
+    }
+
+    private void openPersonProfileActivity(String personName, String role) {
+        Person person = new Person(personName, role);
+        
+        // Create mock data for demonstration
+        person.setBiography("A talented " + role.toLowerCase() + " known for outstanding performances in various films. "
+            + "With a career spanning multiple decades, " + personName + " has become one of the most recognizable names in cinema.");
+        person.setBirthDate("January 15, 1975");
+        
+        java.util.List<String> knownFor = new java.util.ArrayList<>();
+        if (currentFilm != null) {
+            knownFor.add(currentFilm.getTitle());
+        }
+        knownFor.add("The Great Adventure");
+        knownFor.add("Mystery Night");
+        person.setKnownFor(knownFor);
+        
+        // Create mock filmography
+        java.util.List<Person.FilmCredit> filmography = new java.util.ArrayList<>();
+        if (currentFilm != null) {
+            Person.FilmCredit credit = new Person.FilmCredit(
+                currentFilm.getId(),
+                currentFilm.getTitle(),
+                currentFilm.getYear(),
+                currentFilm.getPoster()
+            );
+            filmography.add(credit);
+        }
+        person.setFilmography(filmography);
+        
+        Intent intent = new Intent(this, PersonProfileActivity.class);
+        intent.putExtra("person", person);
         startActivity(intent);
     }
 }

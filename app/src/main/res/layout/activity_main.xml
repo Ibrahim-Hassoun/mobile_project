@@ -260,7 +260,7 @@
                 android:id="@+id/textView15"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cart"
+                android:text="Watchlist"
                 android:textAlignment="center"
                 android:textColor="@color/white" />
         </LinearLayout>

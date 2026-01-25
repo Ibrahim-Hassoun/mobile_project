@@ -1,0 +1,16 @@
+[
+  {"id": 1, "name": "Action"},
+  {"id": 2, "name": "Adventure"},
+  {"id": 3, "name": "Animation"},
+  {"id": 4, "name": "Biography"},
+  {"id": 5, "name": "Comedy"},
+  {"id": 6, "name": "Crime"},
+  {"id": 7, "name": "Drama"},
+  {"id": 8, "name": "Fantasy"},
+  {"id": 9, "name": "Horror"},
+  {"id": 10, "name": "Mystery"},
+  {"id": 11, "name": "Romance"},
+  {"id": 12, "name": "Sci-Fi"},
+  {"id": 13, "name": "Thriller"},
+  {"id": 14, "name": "War"}
+]

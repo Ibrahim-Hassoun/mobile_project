@@ -102,43 +102,33 @@ public class SearchMovieActivity extends AppCompatActivity {
     private void loadMovies() {
         progressBar.setVisibility(View.VISIBLE);
         
-        // Load multiple pages to get more movies
-        loadMoviesFromPage(1);
-        loadMoviesFromPage(2);
-        loadMoviesFromPage(3);
-    }
-
-    private void loadMoviesFromPage(int page) {
-        String url = "https://moviesapi.ir/api/v1/movies?page=" + page;
-        
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-            new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Gson gson = new Gson();
-                    ListFilm listFilm = gson.fromJson(response, ListFilm.class);
-                    
-                    if (listFilm != null && listFilm.getData() != null) {
-                        allMovies.addAll(listFilm.getData());
-                        filteredMovies.clear();
-                        filteredMovies.addAll(allMovies);
-                        adapter.notifyDataSetChanged();
-                    }
-                    
-                    progressBar.setVisibility(View.GONE);
-                    updateEmptyView();
-                }
-            },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    progressBar.setVisibility(View.GONE);
-                    Log.e("SearchMovieActivity", "Error: " + error.toString());
-                    updateEmptyView();
-                }
-            });
-        
-        requestQueue.add(stringRequest);
+        try {
+            // Load movies from both pages
+            String json1 = loadJSONFromAsset("movies_page1.json");
+            String json2 = loadJSONFromAsset("movies_page2.json");
+            
+            Gson gson = new Gson();
+            ListFilm listFilm1 = gson.fromJson(json1, ListFilm.class);
+            ListFilm listFilm2 = gson.fromJson(json2, ListFilm.class);
+            
+            if (listFilm1 != null && listFilm1.getData() != null) {
+                allMovies.addAll(listFilm1.getData());
+            }
+            if (listFilm2 != null && listFilm2.getData() != null) {
+                allMovies.addAll(listFilm2.getData());
+            }
+            
+            filteredMovies.clear();
+            filteredMovies.addAll(allMovies);
+            adapter.notifyDataSetChanged();
+            
+            progressBar.setVisibility(View.GONE);
+            updateEmptyView();
+        } catch (Exception e) {
+            progressBar.setVisibility(View.GONE);
+            Log.e("SearchMovieActivity", "Error loading movies: " + e.getMessage());
+            updateEmptyView();
+        }
     }
 
     private void filterMovies(String query) {
@@ -177,5 +167,21 @@ public class SearchMovieActivity extends AppCompatActivity {
             emptyView.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
         }
+    }
+
+    private String loadJSONFromAsset(String filename) {
+        String json;
+        try {
+            java.io.InputStream is = getAssets().open(filename);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (java.io.IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
     }
 }

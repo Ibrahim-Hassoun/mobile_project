@@ -8,6 +8,8 @@ public class Theater implements Serializable {
     private double distance;
     private String phone;
     private String openingHours;
+    private double latitude;
+    private double longitude;
 
     public Theater() {
     }
@@ -18,6 +20,16 @@ public class Theater implements Serializable {
         this.distance = distance;
         this.phone = phone;
         this.openingHours = openingHours;
+    }
+
+    public Theater(String name, String address, double distance, String phone, String openingHours, double latitude, double longitude) {
+        this.name = name;
+        this.address = address;
+        this.distance = distance;
+        this.phone = phone;
+        this.openingHours = openingHours;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getName() {
@@ -58,5 +70,21 @@ public class Theater implements Serializable {
 
     public void setOpeningHours(String openingHours) {
         this.openingHours = openingHours;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

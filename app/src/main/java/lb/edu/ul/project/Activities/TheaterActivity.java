@@ -76,12 +76,12 @@ public class TheaterActivity extends AppCompatActivity {
 
     private void loadMockTheaters() {
         theaterList.clear();
-        theaterList.add(new Theater("Grand Cinema", "123 Main Street, Downtown", 1.2, "+1 555-0101", "10:00 AM - 11:00 PM"));
-        theaterList.add(new Theater("Starlight Theater", "456 Oak Avenue, City Center", 2.5, "+1 555-0102", "9:00 AM - 12:00 AM"));
-        theaterList.add(new Theater("Regal Cinemas", "789 Elm Street, North Side", 3.8, "+1 555-0103", "11:00 AM - 10:00 PM"));
-        theaterList.add(new Theater("AMC Multiplex", "321 Pine Road, West End", 4.2, "+1 555-0104", "10:30 AM - 11:30 PM"));
-        theaterList.add(new Theater("Cinema Paradise", "654 Maple Drive, East District", 5.1, "+1 555-0105", "9:30 AM - 10:30 PM"));
-        theaterList.add(new Theater("Movie Palace", "987 Cedar Lane, South Quarter", 6.0, "+1 555-0106", "10:00 AM - 11:00 PM"));
+        theaterList.add(new Theater("Grand Cinemas ABC Verdun", "ABC Mall, Verdun, Beirut", 1.2, "+961 1 797 111", "10:00 AM - 12:00 AM", 33.8738, 35.4832));
+        theaterList.add(new Theater("Cinemacity Beirut Souks", "Beirut Souks, Downtown Beirut", 2.5, "+961 1 988 888", "11:00 AM - 11:30 PM", 33.8965, 35.5053));
+        theaterList.add(new Theater("Grand Cinemas - Le Mall Sin el Fil", "Le Mall Sin el Fil, Sin el Fil", 3.8, "+961 1 480 888", "10:00 AM - 12:00 AM", 33.8729, 35.5446));
+        theaterList.add(new Theater("Cinemacity Dbayeh", "Mall of Lebanon, Dbayeh", 4.2, "+961 4 719 500", "10:30 AM - 11:30 PM", 33.9467, 35.6015));
+        theaterList.add(new Theater("Empire Cinemas The Spot", "The Spot Mall, Saida", 5.1, "+961 7 751 000", "11:00 AM - 11:00 PM", 33.5630, 35.3708));
+        theaterList.add(new Theater("Metropolis Cinema Sofil", "Metropolis Empire, Dora", 6.0, "+961 1 240 240", "10:00 AM - 12:00 AM", 33.9167, 35.5667));
         theaterAdapter.notifyDataSetChanged();
     }
 

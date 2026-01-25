@@ -68,76 +68,58 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendRequestBestMovies() {
-        mRequestQueue = Volley.newRequestQueue(this);
         loading1.setVisibility(View.VISIBLE);
-
-        mStringRequest = new StringRequest(Request.Method.GET, "https://moviesapi.ir/api/v1/movies?page=1",
-                response -> {
-                    Gson gson = new Gson();
-                    loading1.setVisibility(View.GONE);
-
-                    // Convert ListFilm to ArrayList<Datum>
-                    ListFilm items = gson.fromJson(response, ListFilm.class);
-                    ArrayList<Datum> moviesList = new ArrayList<>(items.getData()); // ✅ Fix
-
-                    adapterBestMovies = new FilmListAdapter(this, moviesList); // ✅ Pass correct arguments
-                    recyclerViewBestMovies.setAdapter(adapterBestMovies);
-                },
-                error -> {
-                    loading1.setVisibility(View.GONE);
-                    Log.i("UiLover", "onErrorResponse: " + error.toString());
-                });
-
-        mRequestQueue.add(mStringRequest);
+        
+        try {
+            String json = loadJSONFromAsset("movies_page1.json");
+            Gson gson = new Gson();
+            ListFilm items = gson.fromJson(json, ListFilm.class);
+            ArrayList<Datum> moviesList = new ArrayList<>(items.getData());
+            
+            adapterBestMovies = new FilmListAdapter(this, moviesList);
+            recyclerViewBestMovies.setAdapter(adapterBestMovies);
+            loading1.setVisibility(View.GONE);
+        } catch (Exception e) {
+            loading1.setVisibility(View.GONE);
+            Log.e("MainActivity", "Error loading movies: " + e.getMessage());
+        }
     }
 
 
     private void sendRequestUpComing() {
-        mRequestQueue = Volley.newRequestQueue(this);
         loading3.setVisibility(View.VISIBLE);
-
-        mStringRequest3 = new StringRequest(Request.Method.GET, "https://moviesapi.ir/api/v1/movies?page=2",
-                response -> {
-                    Gson gson = new Gson();
-                    loading3.setVisibility(View.GONE);
-
-                    // Convert ListFilm to ArrayList<Datum>
-                    ListFilm items = gson.fromJson(response, ListFilm.class);
-                    ArrayList<Datum> moviesList = new ArrayList<>(items.getData()); // ✅ Fix
-
-                    adapterUpComing = new FilmListAdapter(this, moviesList); // ✅ Pass correct arguments
-                    recyclerviewUpcoming.setAdapter(adapterUpComing);
-                },
-                error -> {
-                    loading3.setVisibility(View.GONE);
-                    Log.i("UiLover", "onErrorResponse: " + error.toString());
-                });
-
-        mRequestQueue.add(mStringRequest3);
+        
+        try {
+            String json = loadJSONFromAsset("movies_page2.json");
+            Gson gson = new Gson();
+            ListFilm items = gson.fromJson(json, ListFilm.class);
+            ArrayList<Datum> moviesList = new ArrayList<>(items.getData());
+            
+            adapterUpComing = new FilmListAdapter(this, moviesList);
+            recyclerviewUpcoming.setAdapter(adapterUpComing);
+            loading3.setVisibility(View.GONE);
+        } catch (Exception e) {
+            loading3.setVisibility(View.GONE);
+            Log.e("MainActivity", "Error loading movies: " + e.getMessage());
+        }
     }
 
 
     private void sendRequestCategory(){
-        mRequestQueue= Volley.newRequestQueue(this);
         loading2.setVisibility(View.VISIBLE);
-        mStringRequest2=new StringRequest(Request.Method.GET, "https://moviesapi.ir/api/v1/genres", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Gson gson=new Gson();
-                loading2.setVisibility(View.GONE);
-                ArrayList<GenresItem> catList=gson.fromJson(response,new TypeToken<ArrayList<GenresItem>>(){}.getType());
-                adapterCategory=new CategoryListAdapter(catList);
-                recyclerviewCategory.setAdapter(adapterCategory);
-            }
-        }, new Response.ErrorListener(){
-            @Override
-            public void onErrorResponse(VolleyError error){
-                loading2.setVisibility(View.GONE);
-                Log.i("UiLover","onErrorResponse: "+ error.toString());
-                //Log.e("Error", "Error fetching upcoming movies: " + error.getMessage());
-            }
-        });
-        mRequestQueue.add(mStringRequest2);
+        
+        try {
+            String json = loadJSONFromAsset("genres.json");
+            Gson gson = new Gson();
+            ArrayList<GenresItem> catList = gson.fromJson(json, new TypeToken<ArrayList<GenresItem>>(){}.getType());
+            
+            adapterCategory = new CategoryListAdapter(catList);
+            recyclerviewCategory.setAdapter(adapterCategory);
+            loading2.setVisibility(View.GONE);
+        } catch (Exception e) {
+            loading2.setVisibility(View.GONE);
+            Log.e("MainActivity", "Error loading genres: " + e.getMessage());
+        }
     }
 
     private void banners(){
@@ -215,5 +197,21 @@ public class MainActivity extends AppCompatActivity {
         ImageView profileBtn = findViewById(R.id.imageView6);
         profileBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, ProfileActivity.class)));
 
+    }
+
+    private String loadJSONFromAsset(String filename) {
+        String json;
+        try {
+            java.io.InputStream is = getAssets().open(filename);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (java.io.IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
     }
 }

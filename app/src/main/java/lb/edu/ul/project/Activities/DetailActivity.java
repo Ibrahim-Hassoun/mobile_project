@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.provider.CalendarContract;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -83,41 +84,50 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void sendRequest() {
-        mRequestQueue = Volley.newRequestQueue(this);
         progressBar.setVisibility(View.VISIBLE);
         scrollView.setVisibility(View.GONE);
 
-        StringRequest mStringRequest = new StringRequest(Request.Method.GET,
-                "https://moviesapi.ir/api/v1/movies/" + idFilm,
-                response -> {
-                    Gson gson = new Gson();
-                    progressBar.setVisibility(View.GONE);
-                    scrollView.setVisibility(View.VISIBLE);
+        try {
+            String json = loadJSONFromAsset("movie_details.json");
+            Gson gson = new Gson();
+            
+            Type type = new TypeToken<java.util.Map<String, FilmItem>>(){}.getType();
+            java.util.Map<String, FilmItem> moviesMap = gson.fromJson(json, type);
+            
+            currentFilm = moviesMap.get(String.valueOf(idFilm));
+            
+            if (currentFilm != null) {
+                progressBar.setVisibility(View.GONE);
+                scrollView.setVisibility(View.VISIBLE);
 
-                    currentFilm = gson.fromJson(response, FilmItem.class);
+                Glide.with(DetailActivity.this)
+                        .load(currentFilm.getPoster())
+                        .into(pic2);
 
-                    Glide.with(DetailActivity.this)
-                            .load(currentFilm.getPoster())
-                            .into(pic2);
+                titleTxt.setText(currentFilm.getTitle());
+                movieRateTxt.setText(currentFilm.getImdbRating());
+                movieTimeTxt.setText(currentFilm.getRuntime());
+                movieSummaryInfo.setText(currentFilm.getPlot());
+                movieActorsInfo.setText(currentFilm.getActors());
 
-                    titleTxt.setText(currentFilm.getTitle());
-                    movieRateTxt.setText(currentFilm.getImdbRating());
-                    movieTimeTxt.setText(currentFilm.getRuntime());
-                    movieSummaryInfo.setText(currentFilm.getPlot());
-                    movieActorsInfo.setText(currentFilm.getActors());
-
-                    if (currentFilm.getImages() != null) {
-                        adapterActorList = new ActorsListAdapter(currentFilm.getImages());
-                        recyclerViewActors.setAdapter(adapterActorList);
-                    }
-                    if (currentFilm.getGenres() != null) {
-                        adapterCategory = new CategoryEachFilmListAdapter(currentFilm.getGenres());
-                        recyclerViewCategory.setAdapter(adapterCategory);
-                    }
-                },
-                error -> progressBar.setVisibility(View.GONE));
-
-        mRequestQueue.add(mStringRequest);
+                if (currentFilm.getImages() != null) {
+                    adapterActorList = new ActorsListAdapter(currentFilm.getImages());
+                    recyclerViewActors.setAdapter(adapterActorList);
+                }
+                if (currentFilm.getGenres() != null) {
+                    adapterCategory = new CategoryEachFilmListAdapter(currentFilm.getGenres());
+                    recyclerViewCategory.setAdapter(adapterCategory);
+                }
+            } else {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(this, "Movie not found", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        } catch (Exception e) {
+            progressBar.setVisibility(View.GONE);
+            Log.e("DetailActivity", "Error loading movie: " + e.getMessage());
+            Toast.makeText(this, "Error loading movie", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadReviews() {
@@ -460,5 +470,21 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "No apps available to share", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private String loadJSONFromAsset(String filename) {
+        String json;
+        try {
+            java.io.InputStream is = getAssets().open(filename);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (java.io.IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
     }
 }

@@ -51,17 +51,32 @@ public class TheaterAdapter extends RecyclerView.Adapter<TheaterAdapter.TheaterV
         });
 
         holder.directionsButton.setOnClickListener(v -> {
-            Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(theater.getAddress()));
+            String uri;
+            if (theater.getLatitude() != 0 && theater.getLongitude() != 0) {
+                uri = "geo:" + theater.getLatitude() + "," + theater.getLongitude() + "?q=" + theater.getLatitude() + "," + theater.getLongitude() + "(" + Uri.encode(theater.getName()) + ")";
+            } else {
+                uri = "geo:0,0?q=" + Uri.encode(theater.getAddress());
+            }
+            Uri gmmIntentUri = Uri.parse(uri);
             Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
             mapIntent.setPackage("com.google.android.apps.maps");
             
             if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(mapIntent);
+            } else {
+                Intent webIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                context.startActivity(webIntent);
             }
         });
 
         holder.itemView.setOnClickListener(v -> {
-            Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(theater.getName() + " " + theater.getAddress()));
+            String uri;
+            if (theater.getLatitude() != 0 && theater.getLongitude() != 0) {
+                uri = "geo:" + theater.getLatitude() + "," + theater.getLongitude() + "?q=" + theater.getLatitude() + "," + theater.getLongitude() + "(" + Uri.encode(theater.getName()) + ")";
+            } else {
+                uri = "geo:0,0?q=" + Uri.encode(theater.getName() + " " + theater.getAddress());
+            }
+            Uri gmmIntentUri = Uri.parse(uri);
             Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
             context.startActivity(mapIntent);
         });

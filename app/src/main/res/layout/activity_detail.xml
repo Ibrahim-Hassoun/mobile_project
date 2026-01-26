@@ -82,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/oval_btn_background"
                     android:padding="8dp"
-                    android:src="@drawable/fav"
+                    android:src="@drawable/book"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

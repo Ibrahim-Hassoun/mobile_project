@@ -280,7 +280,7 @@
                 android:layout_height="24dp"
                 android:layout_gravity="center"
                 android:layout_margin="5dp"
-                android:src="@drawable/quiz"
+                android:src="@drawable/book"
                 app:tint="@color/white" />
 
             <TextView
